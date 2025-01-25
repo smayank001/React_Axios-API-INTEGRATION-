@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { postData } from "../api/PostApi";
+import { postData, updateData } from "../api/PostApi";
 
 export const Form = ({ data, setData, updateDataApi, setUpdateDataApi }) => {
   const [addData, setAddData] = useState({
@@ -44,7 +44,23 @@ export const Form = ({ data, setData, updateDataApi, setUpdateDataApi }) => {
   //updatePostData
 
   const updatePostData = async () => {
-    const res = await updateData(updateDataApi.id, addData);
+    try {
+      const res = await updateData(updateDataApi.id, addData);
+      console.log(res);
+
+      if (res.status === 200) {
+        setData((prev) => {
+          return prev.map((curElem) => {
+            return curElem.id === res.data.id ? res.data : curElem;
+          });
+        });
+
+        setAddData({ title: "", body: "" });
+        setUpdateDataApi({});
+      }
+    } catch ({ error }) {
+      console.log(error);
+    }
   };
 
   //form submission
